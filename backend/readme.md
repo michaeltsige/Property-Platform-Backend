@@ -102,7 +102,7 @@ npm run dev
 
 ## API Documentation
 
-Download the [Postman Collection](./docs/Property-Platform-API.postman_collection.json) and import it into Postman.
+Download the [Postman Collection](./docs/Property%20Platform%20API%20Collection.postman_collection.json) and import it into Postman.
 
 **Import Instructions:**
 
