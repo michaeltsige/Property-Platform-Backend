@@ -31,7 +31,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? "https://your-frontend-url.com"
+        ? process.env.FRONTEND_URL
         : "http://localhost:5173", // Vite default port
     credentials: true,
   }),
