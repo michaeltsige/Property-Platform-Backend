@@ -1,6 +1,6 @@
-const Favorite = require('../models/Favorite');
-const Property = require('../models/Property');
-const { AppError } = require('../utils/errorHandler');
+const Favorite = require("../models/Favorite");
+const Property = require("../models/Property");
+const { AppError } = require("../utils/errorHandler");
 
 // @desc    Add property to favorites
 // @route   POST /api/favorites/:propertyId
@@ -13,33 +13,33 @@ const addFavorite = async (req, res, next) => {
     // Check if property exists and is published
     const property = await Property.findOne({
       _id: propertyId,
-      status: 'published'
+      status: "published",
     });
 
     if (!property) {
-      throw new AppError('Property not found or not published', 404);
+      throw new AppError("Property not found or not published", 404);
     }
 
     // Check if already favorited
     const existingFavorite = await Favorite.findOne({
       user: userId,
-      property: propertyId
+      property: propertyId,
     });
 
     if (existingFavorite) {
-      throw new AppError('Property already in favorites', 400);
+      throw new AppError("Property already in favorites", 400);
     }
 
     // Create favorite
     const favorite = await Favorite.create({
       user: userId,
-      property: propertyId
+      property: propertyId,
     });
 
     res.status(201).json({
       success: true,
       data: favorite,
-      message: 'Added to favorites'
+      message: "Added to favorites",
     });
   } catch (error) {
     next(error);
@@ -56,16 +56,16 @@ const removeFavorite = async (req, res, next) => {
 
     const favorite = await Favorite.findOneAndDelete({
       user: userId,
-      property: propertyId
+      property: propertyId,
     });
 
     if (!favorite) {
-      throw new AppError('Favorite not found', 404);
+      throw new AppError("Favorite not found", 404);
     }
 
     res.status(200).json({
       success: true,
-      message: 'Removed from favorites'
+      message: "Removed from favorites",
     });
   } catch (error) {
     next(error);
@@ -78,28 +78,28 @@ const removeFavorite = async (req, res, next) => {
 const getFavorites = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    
+
     const favorites = await Favorite.find({ user: userId })
       .populate({
-        path: 'property',
-        match: { status: 'published' }, // Only get published properties
+        path: "property",
+        match: { status: "published" }, // Only get published properties
         populate: {
-          path: 'owner',
-          select: 'name email'
-        }
+          path: "owner",
+          select: "name email",
+        },
       })
       .sort({ createdAt: -1 });
 
     // Filter out null properties (if property was deleted or unpublished)
-    const validFavorites = favorites.filter(fav => fav.property);
+    const validFavorites = favorites.filter((fav) => fav.property);
 
     res.status(200).json({
       success: true,
       count: validFavorites.length,
-      data: validFavorites.map(fav => ({
+      data: validFavorites.map((fav) => ({
         ...fav.property.toObject(),
-        favoritedAt: fav.createdAt
-      }))
+        favoritedAt: fav.createdAt,
+      })),
     });
   } catch (error) {
     next(error);
@@ -116,14 +116,14 @@ const checkFavorite = async (req, res, next) => {
 
     const favorite = await Favorite.findOne({
       user: userId,
-      property: propertyId
+      property: propertyId,
     });
 
     res.status(200).json({
       success: true,
       data: {
-        isFavorite: !!favorite
-      }
+        isFavorite: !!favorite,
+      },
     });
   } catch (error) {
     next(error);
@@ -134,5 +134,5 @@ module.exports = {
   addFavorite,
   removeFavorite,
   getFavorites,
-  checkFavorite
+  checkFavorite,
 };

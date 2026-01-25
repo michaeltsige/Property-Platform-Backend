@@ -18,6 +18,8 @@ const {
   handleValidationError,
 } = require("./utils/errorHandler");
 
+const multer = require("multer");
+
 dotenv.config();
 
 const app = express();
@@ -69,20 +71,20 @@ app.use("/api/favorites", favoriteRoutes);
 app.use("/api/admin", adminRoutes);
 
 //my custom error hanling middleware
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || "error";
+// app.use((err, req, res, next) => {
+//   err.statusCode = err.statusCode || 500;
+//   err.status = err.status || "error";
 
-  let error = { ...err };
-  error.message = err.message;
+//   let error = { ...err };
+//   error.message = err.message;
 
-  // Handle specific MongoDB errors
-  if (error.name === "CastError") error = handleCastError(error);
-  if (error.code === 11000) error = handleDuplicateFields(error);
-  if (error.name === "ValidationError") error = handleValidationError(error);
+//   // Handle specific MongoDB errors
+//   if (error.name === "CastError") error = handleCastError(error);
+//   if (error.code === 11000) error = handleDuplicateFields(error);
+//   if (error.name === "ValidationError") error = handleValidationError(error);
 
-  sendError(error, res);
-});
+//   sendError(error, res);
+// });
 
 // 404 not found handler, maybe add a nice looking static page here
 app.use((req, res) => {
@@ -92,7 +94,7 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error("Error:", err.stack);
 
-  const status = err.status || 500;
+  const status = err.status * 1 || 500;
   const message = err.message || "Internal server error";
 
   res.status(status).json({

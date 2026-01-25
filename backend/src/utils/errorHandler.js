@@ -2,7 +2,7 @@ class AppError extends Error {
   constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
     this.isOperational = true;
 
     Error.captureStackTrace(this, this.constructor);
@@ -21,32 +21,32 @@ const handleDuplicateFields = (err) => {
 };
 
 const handleValidationError = (err) => {
-  const errors = Object.values(err.errors).map(el => el.message);
-  const message = `Invalid input data. ${errors.join('. ')}`;
+  const errors = Object.values(err.errors).map((el) => el.message);
+  const message = `Invalid input data. ${errors.join(". ")}`;
   return new AppError(message, 400);
 };
 
 const sendError = (err, res) => {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     res.status(err.statusCode || 500).json({
       status: err.status,
       error: err,
       message: err.message,
-      stack: err.stack
+      stack: err.stack,
     });
   } else {
     // Production
     if (err.isOperational) {
       res.status(err.statusCode).json({
         status: err.status,
-        message: err.message
+        message: err.message,
       });
     } else {
       // Programming or unknown errors
-      console.error('ERROR', err);
+      console.error("ERROR", err);
       res.status(500).json({
-        status: 'error',
-        message: 'Something went wrong!'
+        status: "error",
+        message: "Something went wrong!",
       });
     }
   }
@@ -57,5 +57,5 @@ module.exports = {
   handleCastError,
   handleDuplicateFields,
   handleValidationError,
-  sendError
+  sendError,
 };
