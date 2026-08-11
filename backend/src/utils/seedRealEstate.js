@@ -28,7 +28,11 @@ const sampleProperties = [
       }
     ],
     status: "published",
-    category: "residential"
+    category: "villa",
+    bedrooms: 4,
+    bathrooms: 3,
+    area: 350,
+    amenities: ["Rooftop Terrace", "Garden", "Security", "Parking"]
   },
   {
     title: "Luxury 2-Bedroom Apartment in Kazanchis",
@@ -54,7 +58,11 @@ const sampleProperties = [
       }
     ],
     status: "published",
-    category: "residential"
+    category: "apartment",
+    bedrooms: 2,
+    bathrooms: 2,
+    area: 140,
+    amenities: ["Elevator", "Security", "Generator", "Parking"]
   },
   {
     title: "Executive Family Home with Garden in CMC",
@@ -80,7 +88,11 @@ const sampleProperties = [
       }
     ],
     status: "published",
-    category: "residential"
+    category: "house",
+    bedrooms: 5,
+    bathrooms: 4,
+    area: 420,
+    amenities: ["Garden", "Staff Quarters", "Security", "Parking"]
   },
   {
     title: "Prime Commercial Office Suite in Bole Medhanialem",
@@ -101,7 +113,9 @@ const sampleProperties = [
       }
     ],
     status: "published",
-    category: "commercial"
+    category: "commercial",
+    area: 250,
+    amenities: ["Fiber Internet", "Elevator", "Conference Room", "Generator"]
   },
   {
     title: "Charming 3-Bedroom Villa in Dire Dawa",
@@ -122,7 +136,11 @@ const sampleProperties = [
       }
     ],
     status: "published",
-    category: "residential"
+    category: "villa",
+    bedrooms: 3,
+    bathrooms: 2,
+    area: 280,
+    amenities: ["Veranda", "Garden", "Air Conditioning", "Parking"]
   }
 ];
 
@@ -137,7 +155,6 @@ const seedProperties = async () => {
     await mongoose.connect(uri);
     console.log("Connected to MongoDB Atlas for seeding properties...");
 
-    // Find an existing owner or admin user to assign as property owner
     let defaultOwner = await User.findOne({});
     if (!defaultOwner) {
       console.log("No users found. Creating a default owner user...");
@@ -151,11 +168,9 @@ const seedProperties = async () => {
 
     console.log(`Using owner ID: ${defaultOwner._id} (${defaultOwner.email})`);
 
-    // Clear old properties without valid Unsplash/Cloudinary images
     const deleteResult = await Property.deleteMany({});
     console.log(`Cleared ${deleteResult.deletedCount} old properties.`);
 
-    // Assign owner to all sample properties
     const propertiesWithOwner = sampleProperties.map(p => ({
       ...p,
       owner: defaultOwner._id
